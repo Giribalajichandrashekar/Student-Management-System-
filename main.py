@@ -3,10 +3,6 @@ import json
 students = []
 
 
-# =========================
-# File Handling Functions
-# =========================
-
 def save_students():
     with open("students.json", "w") as file:
         json.dump(students, file, indent=4)
@@ -26,10 +22,6 @@ def load_students():
         students = []
 
 
-# =========================
-# Menu
-# =========================
-
 def menu():
     print("\n===== Student Management System =====")
     print("1. Add Student")
@@ -37,25 +29,47 @@ def menu():
     print("3. Search Student")
     print("4. Update Student")
     print("5. Delete Student")
-    print("6. Exit")
+    print("6. Add Marks")
+    print("7. View results")
+    print("8. Exit")
 
 
-# =========================
-# Add Student
-# =========================
+
 
 def add_student():
     student_id = input("Enter ID: ")
 
-    # Prevent duplicate IDs
     for student in students:
         if student["id"] == student_id:
             print("Student ID already exists!")
             return
 
-    name = input("Enter Name: ")
-    age = input("Enter Age: ")
-    course = input("Enter Course: ")
+    while True:
+        name = input("Enter Name: ").strip()
+
+        if name == "":
+            print("Name cannot be empty.")
+        else:
+            break
+
+    while True:
+        age = input("Enter Age: ").strip()
+        
+        if age.isdigit():
+            if 1<= int(age) <= 120:
+                break
+            else:
+                print("Age must be between 1 and 120.")
+        else:
+            print("Enter a valid number for age.")
+
+    while True:
+        course = input("Enter Course: ").strip()
+        if course == "":
+            print("Course cannot be empty.")
+        else:
+            break
+
 
     student = {
         "id": student_id,
@@ -71,9 +85,6 @@ def add_student():
     print("Student Added Successfully!")
 
 
-# =========================
-# View Students
-# =========================
 
 def view_students():
     if len(students) == 0:
@@ -88,9 +99,6 @@ def view_students():
         print("Course:", student["course"])
 
 
-# =========================
-# Search Student
-# =========================
 
 def search_student():
     search_id = input("Enter Student ID to search: ")
@@ -107,9 +115,6 @@ def search_student():
     print("Student not found.")
 
 
-# =========================
-# Update Student
-# =========================
 
 def update_student():
     update_id = input("Enter Student ID to update: ")
@@ -129,9 +134,6 @@ def update_student():
     print("Student not found.")
 
 
-# =========================
-# Delete Student
-# =========================
 
 def delete_student():
     delete_id = input("Enter Student ID to delete: ")
@@ -147,16 +149,110 @@ def delete_student():
 
     print("Student not found.")
 
+def get_marks(subject):
 
-# =========================
-# Program Start
-# =========================
+    while True:
+        marks = input(f"Enter {subject} Marks: ")
+
+        if marks.isdigit():
+
+            marks = int(marks)
+
+            if 0 <= marks <= 100:
+                return marks
+
+            else:
+                print("Marks must be between 0 and 100.")
+
+        else:
+            print("Please enter a valid number.")
+
+def add_marks():
+
+    student_id = input("Enter Student ID: ")
+
+    for student in students:
+
+        if student["id"] == student_id:
+
+            # Check if marks already exist
+            if "maths" in student:
+
+                print("Marks already exist.")
+                print("Use Update Marks instead.")
+                return
+
+            maths = get_marks("Maths")
+            english = get_marks("English")
+            science = get_marks("Science")
+
+            student["maths"] = maths
+            student["english"] = english
+            student["science"] = science
+
+            save_students()
+
+            print("Marks Added Successfully!")
+            return
+
+    print("Student not found.")
+
+def calculate_grade(average):
+
+    if average >= 90:
+        return "A"
+
+    elif average >= 75:
+        return "B"
+
+    elif average >= 60:
+        return "C"
+
+    else:
+        return "F"
+
+def view_result():
+
+    student_id = input("Enter Student ID: ")
+
+    for student in students:
+
+        if student["id"] == student_id:
+
+            if "maths" not in student:
+
+                print("Marks not available.")
+                return
+
+            total = (
+                student["maths"]
+                + student["english"]
+                + student["science"]
+            )
+
+            average = total / 3
+
+            grade = calculate_grade(average)
+
+            print("\n===== RESULT =====")
+            print("ID:", student["id"])
+            print("Name:", student["name"])
+
+            print("\nMaths:", student["maths"])
+            print("English:", student["english"])
+            print("Science:", student["science"])
+
+            print("\nTotal:", total)
+            print("Average:", round(average, 2))
+            print("Grade:", grade)
+
+            return
+
+    print("Student not found.")
+
 
 load_students()
 
-# =========================
-# Main Loop
-# =========================
 
 while True:
     menu()
@@ -179,6 +275,12 @@ while True:
         delete_student()
 
     elif choice == "6":
+        add_marks()
+
+    elif choice == "7":
+        view_result()
+
+    elif choice == "8":
         print("Exiting...")
         print("Thank you for using the Student Management System!")
         break
