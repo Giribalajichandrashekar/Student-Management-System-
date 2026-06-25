@@ -30,8 +30,9 @@ def menu():
     print("4. Update Student")
     print("5. Delete Student")
     print("6. Add Marks")
-    print("7. View results")
-    print("8. Exit")
+    print("7. update marks")
+    print("8. View results")
+    print("9. Exit")
 
 
 
@@ -211,6 +212,39 @@ def calculate_grade(average):
     else:
         return "F"
 
+def update_marks():
+
+    student_id = input("Enter Student ID: ")
+
+    for student in students:
+
+        if student["id"] == student_id:
+
+            if "maths" not in student:
+
+                print("Marks not found.")
+                print("Use Add Marks first.")
+                return
+
+            print("\nCurrent Marks")
+            print("Maths:", student["maths"])
+            print("English:", student["english"])
+            print("Science:", student["science"])
+
+            print("\nEnter New Marks")
+
+            student["maths"] = get_marks("Maths")
+            student["english"] = get_marks("English")
+            student["science"] = get_marks("Science")
+
+            save_students()
+
+            print("Marks Updated Successfully!")
+            return
+
+    print("Student not found.")
+
+    
 def view_result():
 
     student_id = input("Enter Student ID: ")
@@ -278,9 +312,12 @@ while True:
         add_marks()
 
     elif choice == "7":
-        view_result()
+        update_marks()
 
     elif choice == "8":
+        view_result()
+
+    elif choice == "9": 
         print("Exiting...")
         print("Thank you for using the Student Management System!")
         break
